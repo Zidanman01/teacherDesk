@@ -1,4 +1,4 @@
-# TeacherDesk Lokal Desktop v1.1
+# TeacherDesk Lokal Desktop v1.0
 
 TeacherDesk Lokal Desktop adalah aplikasi web untuk pengajar yang berjalan di komputer sendiri. Aplikasi mengelola mata pelajaran, kelas, jadwal mengajar, materi, jurnal pelaksanaan, bank soal pilihan ganda empat opsi, generator soal berbasis materi, pencetakan soal, dan backup data.
 
@@ -11,7 +11,7 @@ Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Ant
 - HTML, CSS, dan JavaScript tanpa framework eksternal
 - Tidak membutuhkan Composer, Node.js, akun pengguna, atau internet
 
-## Fitur versi 1.1 Desktop
+## Fitur versi 1.0 Desktop
 
 1. Akses langsung ke dashboard tanpa login.
 2. Dashboard jadwal hari ini, progres materi, dan item yang perlu ditindaklanjuti.
