@@ -1,4 +1,4 @@
-# TeacherDesk Lokal Desktop v1.3
+# TeacherDesk Lokal Desktop v1.2
 
 TeacherDesk Lokal Desktop adalah aplikasi web lokal untuk pengajar. Aplikasi mengelola mata pelajaran, kelas, jadwal mengajar, template jadwal mingguan, kalender mingguan, materi, jurnal pelaksanaan, bank soal pilihan ganda empat opsi, generator soal berbasis materi, pencetakan soal, dan backup data.
 
@@ -11,7 +11,7 @@ Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Ant
 - HTML, CSS, dan JavaScript tanpa framework eksternal
 - Tidak membutuhkan Composer, Node.js, akun pengguna, atau internet
 
-## Fitur versi 1.3 Desktop
+## Fitur versi 1.2 Desktop
 
 1. Akses langsung ke dashboard tanpa login.
 2. Dashboard jadwal hari ini, progres materi, dan item yang perlu ditindaklanjuti.
@@ -44,15 +44,15 @@ Sistem tidak membuat jadwal ganda. Jadwal yang sama akan dilewati. Jadwal yang b
 
 Materi bawaan pada template bersifat opsional. Kosongkan materi jika materi berubah setiap pertemuan. Setelah jadwal dibuat, Anda tetap dapat memilih atau mengganti materi pada setiap jadwal.
 
-## Pembaruan dari versi 1.2
+## Pembaruan dari versi 1.1
 
-Versi 1.3 menambahkan tabel `schedule_templates`. Aplikasi menjalankan migrasi kecil secara otomatis saat pertama kali dibuka.
+Versi  menambahkan tabel `schedule_templates`. Aplikasi menjalankan migrasi kecil secara otomatis saat pertama kali dibuka.
 
 Untuk memperbarui instalasi lama:
 
 1. Buat backup database melalui menu **Backup**.
 2. Simpan salinan file `.env` dan folder `storage/materials`.
-3. Ganti file aplikasi lama dengan file versi 1.3.
+3. Ganti file aplikasi lama dengan file versi 1.2.
 4. Kembalikan `.env` dan folder lampiran.
 5. Buka aplikasi seperti biasa. Tabel template akan dibuat otomatis.
 6. Buka menu **Jadwal Mengajar** dan simpan tiga jadwal tetap sebagai template.
