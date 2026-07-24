@@ -1,0 +1,36 @@
+PANDUAN INSTALASI TEACHERDESK LOKAL DESKTOP v1.1
+================================================
+
+VERSI INI
+- Tidak memiliki halaman login.
+- Dashboard terbuka langsung.
+- Tampilan khusus desktop dengan lebar layar minimum 1.200 piksel.
+- Tidak memiliki menu seluler atau tata letak responsif.
+
+PILIHAN A - LARAGON
+1. Ekstrak folder teacherdesk-local-desktop ke C:\laragon\www\
+2. Jalankan Laragon lalu klik Start All.
+3. Buka browser dan akses:
+   http://localhost/teacherdesk-local-desktop/setup.php
+4. Isi:
+   Host      : 127.0.0.1
+   Port      : 3306
+   Database  : teacherdesk_local
+   User      : root
+   Password  : kosongkan
+5. Klik Pasang aplikasi.
+6. Klik Buka aplikasi. Dashboard langsung terbuka.
+
+PILIHAN B - XAMPP
+1. Ekstrak folder teacherdesk-local-desktop ke C:\xampp\htdocs\
+2. Aktifkan Apache dan MySQL.
+3. Buka:
+   http://localhost/teacherdesk-local-desktop/setup.php
+4. Isi konfigurasi database dan klik Pasang aplikasi.
+
+CATATAN
+- PHP minimal versi 8.1.
+- Aktifkan ekstensi PDO MySQL atau pdo_mysql.
+- Backup data dari menu Backup.
+- Salin folder storage\materials saat membuat backup lengkap.
+- Karena tidak ada login, batasi akses folder aplikasi hanya pada komputer tepercaya.
