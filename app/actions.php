@@ -26,6 +26,18 @@ function handle_action(PDO $db): void
             case 'delete_schedule':
                 delete_record($db, 'schedules', 'schedules');
                 break;
+            case 'save_schedule_template':
+                save_schedule_template($db);
+                break;
+            case 'save_schedule_as_template':
+                save_schedule_as_template($db);
+                break;
+            case 'apply_schedule_templates':
+                apply_schedule_templates($db);
+                break;
+            case 'delete_schedule_template':
+                delete_schedule_template($db);
+                break;
             case 'save_material':
                 save_material($db);
                 break;
@@ -154,7 +166,233 @@ function save_schedule(PDO $db): never
         $db->prepare('INSERT INTO schedules (subject_id,class_id,material_id,schedule_date,start_time,end_time,location,notes,status) VALUES (?,?,?,?,?,?,?,?,?)')->execute($params);
         flash('success', 'Jadwal berhasil ditambahkan.');
     }
-    redirect(url('schedules'));
+    $returnWeek = trim((string) ($_POST['return_week'] ?? ''));
+    $redirectParams = preg_match('/^\d{4}-\d{2}-\d{2}$/', $returnWeek) ? ['week' => $returnWeek] : [];
+    redirect(url('schedules', $redirectParams));
+}
+
+function schedule_return_params(): array
+{
+    $returnWeek = trim((string) ($_POST['return_week'] ?? ''));
+    return preg_match('/^\d{4}-\d{2}-\d{2}$/', $returnWeek) ? ['week' => $returnWeek] : [];
+}
+
+function save_schedule_template(PDO $db): never
+{
+    $required = require_fields([
+        'name' => 'Nama template',
+        'subject_id' => 'Mata pelajaran',
+        'class_id' => 'Kelas',
+        'day_of_week' => 'Hari mengajar',
+        'start_time' => 'Jam mulai',
+        'end_time' => 'Jam selesai',
+    ]);
+    if ($required['end_time'] <= $required['start_time']) {
+        throw new InvalidArgumentException('Jam selesai template harus lebih besar daripada jam mulai.');
+    }
+
+    $day = (int) $required['day_of_week'];
+    if ($day < 1 || $day > 7) {
+        throw new InvalidArgumentException('Hari template tidak valid.');
+    }
+
+    $id = (int) ($_POST['id'] ?? 0);
+    $status = in_array($_POST['status'] ?? '', ['active', 'archived'], true) ? (string) $_POST['status'] : 'active';
+    if ($status === 'active') {
+        $conflict = $db->prepare(
+            "SELECT COUNT(*) FROM schedule_templates
+             WHERE day_of_week=? AND id<>? AND status='active'
+             AND start_time < ? AND end_time > ?"
+        );
+        $conflict->execute([$day, $id, $required['end_time'], $required['start_time']]);
+        if ((int) $conflict->fetchColumn() > 0) {
+            throw new InvalidArgumentException('Template bertabrakan dengan template aktif lain pada hari dan jam tersebut.');
+        }
+    }
+
+    $params = [
+        $required['name'],
+        (int) $required['subject_id'],
+        (int) $required['class_id'],
+        ($_POST['material_id'] ?? '') !== '' ? (int) $_POST['material_id'] : null,
+        $day,
+        $required['start_time'],
+        $required['end_time'],
+        trim((string) ($_POST['location'] ?? '')),
+        trim((string) ($_POST['notes'] ?? '')),
+        $status,
+    ];
+
+    if ($id > 0) {
+        $params[] = $id;
+        $db->prepare(
+            'UPDATE schedule_templates SET name=?,subject_id=?,class_id=?,material_id=?,day_of_week=?,start_time=?,end_time=?,location=?,notes=?,status=? WHERE id=?'
+        )->execute($params);
+        flash('success', 'Template jadwal berhasil diperbarui.');
+    } else {
+        $db->prepare(
+            'INSERT INTO schedule_templates (name,subject_id,class_id,material_id,day_of_week,start_time,end_time,location,notes,status) VALUES (?,?,?,?,?,?,?,?,?,?)'
+        )->execute($params);
+        flash('success', 'Template jadwal berhasil disimpan.');
+    }
+
+    redirect(url('schedules', schedule_return_params()));
+}
+
+function save_schedule_as_template(PDO $db): never
+{
+    $scheduleId = (int) ($_POST['schedule_id'] ?? 0);
+    $stmt = $db->prepare(
+        'SELECT s.*,sub.name subject_name,c.name class_name
+         FROM schedules s
+         JOIN subjects sub ON sub.id=s.subject_id
+         JOIN classes c ON c.id=s.class_id
+         WHERE s.id=?'
+    );
+    $stmt->execute([$scheduleId]);
+    $schedule = $stmt->fetch();
+    if (!$schedule) {
+        throw new RuntimeException('Jadwal sumber tidak ditemukan.');
+    }
+
+    $day = (int) date('N', strtotime((string) $schedule['schedule_date']));
+    $duplicate = $db->prepare(
+        'SELECT id FROM schedule_templates
+         WHERE subject_id=? AND class_id=? AND day_of_week=? AND start_time=? AND end_time=? AND status=\'active\'
+         LIMIT 1'
+    );
+    $duplicate->execute([
+        $schedule['subject_id'], $schedule['class_id'], $day,
+        $schedule['start_time'], $schedule['end_time'],
+    ]);
+    if ($duplicate->fetchColumn()) {
+        flash('info', 'Jadwal tersebut sudah tersimpan sebagai template aktif.');
+        redirect(url('schedules', schedule_return_params()));
+    }
+
+    $overlap = $db->prepare(
+        "SELECT COUNT(*) FROM schedule_templates
+         WHERE day_of_week=? AND status='active' AND start_time < ? AND end_time > ?"
+    );
+    $overlap->execute([$day, $schedule['end_time'], $schedule['start_time']]);
+    if ((int) $overlap->fetchColumn() > 0) {
+        throw new InvalidArgumentException('Jadwal ini bertabrakan dengan template aktif lain pada hari dan jam tersebut.');
+    }
+
+    $name = trim((string) ($_POST['template_name'] ?? ''));
+    if ($name === '') {
+        $name = $schedule['subject_name'] . ' • ' . $schedule['class_name'];
+    }
+
+    $db->prepare(
+        'INSERT INTO schedule_templates (name,subject_id,class_id,material_id,day_of_week,start_time,end_time,location,notes,status)
+         VALUES (?,?,?,?,?,?,?,?,?,\'active\')'
+    )->execute([
+        $name, $schedule['subject_id'], $schedule['class_id'], $schedule['material_id'], $day,
+        $schedule['start_time'], $schedule['end_time'], $schedule['location'], $schedule['notes'],
+    ]);
+
+    flash('success', 'Jadwal berhasil disimpan sebagai template mingguan.');
+    redirect(url('schedules', schedule_return_params()));
+}
+
+function apply_schedule_templates(PDO $db): never
+{
+    $weekInput = trim((string) ($_POST['week_start'] ?? ''));
+    $reference = DateTimeImmutable::createFromFormat('!Y-m-d', $weekInput);
+    if (!$reference || $reference->format('Y-m-d') !== $weekInput) {
+        throw new InvalidArgumentException('Tanggal awal minggu tidak valid.');
+    }
+    $weekStart = $reference->modify('-' . ((int) $reference->format('N') - 1) . ' days');
+    $weeksCount = max(1, min(52, (int) ($_POST['weeks_count'] ?? 1)));
+
+    $templateIds = array_values(array_filter(array_map('intval', (array) ($_POST['template_ids'] ?? [])), static fn(int $id): bool => $id > 0));
+    if (isset($_POST['template_selection_present']) && !$templateIds) {
+        throw new InvalidArgumentException('Pilih minimal satu template yang akan diterapkan.');
+    }
+    $sql = "SELECT * FROM schedule_templates WHERE status='active'";
+    $params = [];
+    if ($templateIds) {
+        $sql .= ' AND id IN (' . implode(',', array_fill(0, count($templateIds), '?')) . ')';
+        $params = $templateIds;
+    }
+    $sql .= ' ORDER BY day_of_week,start_time';
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
+    $templates = $stmt->fetchAll();
+    if (!$templates) {
+        throw new RuntimeException('Belum ada template aktif yang dipilih untuk diterapkan.');
+    }
+
+    $duplicateStmt = $db->prepare(
+        'SELECT COUNT(*) FROM schedules
+         WHERE schedule_date=? AND subject_id=? AND class_id=? AND start_time=? AND end_time=?'
+    );
+    $conflictStmt = $db->prepare(
+        "SELECT COUNT(*) FROM schedules
+         WHERE schedule_date=? AND start_time < ? AND end_time > ? AND status<>'cancelled'"
+    );
+    $insertStmt = $db->prepare(
+        'INSERT INTO schedules (subject_id,class_id,material_id,schedule_date,start_time,end_time,location,notes,status)
+         VALUES (?,?,?,?,?,?,?,?,\'scheduled\')'
+    );
+
+    $created = 0;
+    $duplicates = 0;
+    $conflicts = 0;
+    $db->beginTransaction();
+    try {
+        for ($weekOffset = 0; $weekOffset < $weeksCount; $weekOffset++) {
+            $currentWeek = $weekStart->modify('+' . ($weekOffset * 7) . ' days');
+            foreach ($templates as $template) {
+                $targetDate = $currentWeek->modify('+' . ((int) $template['day_of_week'] - 1) . ' days')->format('Y-m-d');
+                $duplicateStmt->execute([
+                    $targetDate, $template['subject_id'], $template['class_id'],
+                    $template['start_time'], $template['end_time'],
+                ]);
+                if ((int) $duplicateStmt->fetchColumn() > 0) {
+                    $duplicates++;
+                    continue;
+                }
+
+                $conflictStmt->execute([$targetDate, $template['end_time'], $template['start_time']]);
+                if ((int) $conflictStmt->fetchColumn() > 0) {
+                    $conflicts++;
+                    continue;
+                }
+
+                $insertStmt->execute([
+                    $template['subject_id'], $template['class_id'], $template['material_id'], $targetDate,
+                    $template['start_time'], $template['end_time'], $template['location'], $template['notes'],
+                ]);
+                $created++;
+            }
+        }
+        $db->commit();
+    } catch (Throwable $e) {
+        if ($db->inTransaction()) {
+            $db->rollBack();
+        }
+        throw $e;
+    }
+
+    $message = "{$created} jadwal berhasil dibuat dari template untuk {$weeksCount} minggu.";
+    if ($duplicates > 0) {
+        $message .= " {$duplicates} jadwal yang sudah ada dilewati.";
+    }
+    if ($conflicts > 0) {
+        $message .= " {$conflicts} jadwal bentrok tidak dibuat.";
+    }
+    flash($conflicts > 0 ? 'warning' : 'success', $message);
+    redirect(url('schedules', ['week' => $weekStart->format('Y-m-d')]));
+}
+
+function delete_schedule_template(PDO $db): never
+{
+    $id = (int) ($_POST['id'] ?? 0);
+    $db->prepare('DELETE FROM schedule_templates WHERE id=?')->execute([$id]);
+    flash('success', 'Template jadwal berhasil dihapus. Jadwal yang sudah dibuat tetap tersimpan.');
+    redirect(url('schedules', schedule_return_params()));
 }
 
 function save_material(PDO $db): never

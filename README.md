@@ -1,6 +1,6 @@
-# TeacherDesk Lokal Desktop v1.1
+# TeacherDesk Lokal Desktop v1.3
 
-TeacherDesk Lokal Desktop adalah aplikasi web untuk pengajar yang berjalan di komputer sendiri. Aplikasi mengelola mata pelajaran, kelas, jadwal mengajar, materi, jurnal pelaksanaan, bank soal pilihan ganda empat opsi, generator soal berbasis materi, pencetakan soal, dan backup data.
+TeacherDesk Lokal Desktop adalah aplikasi web lokal untuk pengajar. Aplikasi mengelola mata pelajaran, kelas, jadwal mengajar, template jadwal mingguan, kalender mingguan, materi, jurnal pelaksanaan, bank soal pilihan ganda empat opsi, generator soal berbasis materi, pencetakan soal, dan backup data.
 
 Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Antarmuka dibuat khusus untuk layar desktop dengan lebar minimum 1.200 piksel dan tidak menyesuaikan tata letak untuk ponsel atau tablet.
 
@@ -11,21 +11,55 @@ Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Ant
 - HTML, CSS, dan JavaScript tanpa framework eksternal
 - Tidak membutuhkan Composer, Node.js, akun pengguna, atau internet
 
-## Fitur versi 1.1 Desktop
+## Fitur versi 1.3 Desktop
 
 1. Akses langsung ke dashboard tanpa login.
 2. Dashboard jadwal hari ini, progres materi, dan item yang perlu ditindaklanjuti.
 3. CRUD mata pelajaran dan kelas.
 4. Jadwal mengajar dengan deteksi bentrok waktu.
-5. Materi pembelajaran dengan lampiran maksimal 5 MB.
-6. Jurnal mengajar yang menandai jadwal sebagai terlaksana.
-7. Bank soal pilihan ganda dengan empat opsi A, B, C, dan D.
-8. Generator soal lokal berbasis kalimat dan istilah pada materi.
-9. Penyaringan, pencarian, validasi status soal, dan cetak soal terpilih.
-10. Backup dan restore data dalam format JSON.
-11. Tata letak desktop-only tanpa menu seluler dan tanpa breakpoint responsif.
+5. Kalender mingguan Senin sampai Minggu.
+6. Template jadwal berulang berdasarkan hari dan jam.
+7. Menyimpan jadwal yang sudah ada sebagai template dengan satu tombol.
+8. Menerapkan beberapa template sekaligus untuk 1 sampai 52 minggu.
+9. Pencegahan duplikasi dan bentrok saat template diterapkan.
+10. Materi pembelajaran dengan lampiran maksimal 5 MB.
+11. Jurnal mengajar yang menandai jadwal sebagai terlaksana.
+12. Bank soal pilihan ganda dengan empat opsi A, B, C, dan D.
+13. Generator soal lokal berbasis kalimat dan istilah pada materi.
+14. Penyaringan, pencarian, validasi status soal, dan cetak soal terpilih.
+15. Backup dan restore data dalam format JSON, termasuk template jadwal.
+16. Tata letak desktop-only tanpa menu seluler dan tanpa breakpoint responsif.
 
-## Instalasi cepat dengan Laragon
+## Cara menggunakan template jadwal
+
+1. Buka menu **Jadwal Mengajar**.
+2. Pada daftar jadwal lama, klik tombol **Template** untuk menyimpan jadwal tersebut sebagai pola mingguan.
+3. Ulangi untuk tiga jadwal tetap Anda.
+4. Pada bagian **Template jadwal mingguan**, centang template yang ingin dipakai.
+5. Pilih minggu awal.
+6. Isi jumlah minggu. Nilai dapat diatur dari 1 sampai 52.
+7. Klik **Terapkan template**.
+
+Sistem tidak membuat jadwal ganda. Jadwal yang sama akan dilewati. Jadwal yang bertabrakan dengan jadwal lain juga tidak dibuat dan akan dilaporkan.
+
+Materi bawaan pada template bersifat opsional. Kosongkan materi jika materi berubah setiap pertemuan. Setelah jadwal dibuat, Anda tetap dapat memilih atau mengganti materi pada setiap jadwal.
+
+## Pembaruan dari versi 1.2
+
+Versi 1.3 menambahkan tabel `schedule_templates`. Aplikasi menjalankan migrasi kecil secara otomatis saat pertama kali dibuka.
+
+Untuk memperbarui instalasi lama:
+
+1. Buat backup database melalui menu **Backup**.
+2. Simpan salinan file `.env` dan folder `storage/materials`.
+3. Ganti file aplikasi lama dengan file versi 1.3.
+4. Kembalikan `.env` dan folder lampiran.
+5. Buka aplikasi seperti biasa. Tabel template akan dibuat otomatis.
+6. Buka menu **Jadwal Mengajar** dan simpan tiga jadwal tetap sebagai template.
+
+Jangan menjalankan `setup.php` pada database lama karena installer membuat ulang tabel dan data demonstrasi.
+
+## Instalasi baru dengan Laragon
 
 1. Ekstrak folder `teacherdesk-local-desktop` ke `C:\laragon\www\`.
 2. Jalankan Laragon.
@@ -40,7 +74,7 @@ Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Ant
 6. Klik **Pasang aplikasi**.
 7. Klik **Buka aplikasi**. Dashboard langsung terbuka.
 
-## Instalasi cepat dengan XAMPP
+## Instalasi baru dengan XAMPP
 
 1. Ekstrak folder ke `C:\xampp\htdocs\teacherdesk-local-desktop`.
 2. Aktifkan Apache dan MySQL dari XAMPP Control Panel.
@@ -59,17 +93,15 @@ Versi ini tidak memiliki halaman login. Aplikasi langsung membuka dashboard. Ant
 
 Generator tidak menggunakan AI daring. Sistem memilih kalimat dari materi, menghapus satu istilah, lalu mengambil tiga istilah lain sebagai pengecoh. Semua hasil disimpan sebagai **draf** dan perlu diperiksa oleh pengajar.
 
-Materi terbaik untuk generator memiliki beberapa paragraf lengkap, definisi dan istilah yang jelas, serta minimal empat istilah berbeda.
-
 ## Backup
 
-Menu Backup mengunduh data tabel dalam format JSON. File lampiran tidak masuk ke JSON. Salin juga folder `storage/materials` saat membuat backup lengkap.
+Menu Backup mengunduh seluruh data tabel dalam format JSON, termasuk template jadwal. File lampiran tidak masuk ke JSON. Salin juga folder `storage/materials` saat membuat backup lengkap.
 
 ## Struktur folder
 
 ```text
 teacherdesk-local-desktop/
-├── app/                 Logika backend
+├── app/                 Logika backend dan migrasi database
 ├── assets/              CSS dan JavaScript
 ├── config/              Bootstrap dan koneksi database
 ├── database/            Skema dan data awal
@@ -78,7 +110,7 @@ teacherdesk-local-desktop/
 ├── storage/materials/   Lampiran materi
 ├── index.php            Entry point aplikasi
 ├── print.php            Halaman cetak soal
-└── setup.php            Installer database
+└── setup.php            Installer database baru
 ```
 
 ## Catatan akses lokal

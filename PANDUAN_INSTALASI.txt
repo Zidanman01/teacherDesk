@@ -1,5 +1,11 @@
-PANDUAN INSTALASI TEACHERDESK LOKAL DESKTOP v1.1
+PANDUAN INSTALASI TEACHERDESK LOKAL DESKTOP v1.3
 ================================================
+
+FITUR BARU
+- Template jadwal mingguan.
+- Jadwal lama dapat disimpan sebagai template.
+- Beberapa template dapat diterapkan untuk 1 sampai 52 minggu.
+- Jadwal duplikat dan bentrok akan dilewati.
 
 VERSI INI
 - Tidak memiliki halaman login.
@@ -7,7 +13,7 @@ VERSI INI
 - Tampilan khusus desktop dengan lebar layar minimum 1.200 piksel.
 - Tidak memiliki menu seluler atau tata letak responsif.
 
-PILIHAN A - LARAGON
+INSTALASI BARU DENGAN LARAGON
 1. Ekstrak folder teacherdesk-local-desktop ke C:\laragon\www\
 2. Jalankan Laragon lalu klik Start All.
 3. Buka browser dan akses:
@@ -19,14 +25,22 @@ PILIHAN A - LARAGON
    User      : root
    Password  : kosongkan
 5. Klik Pasang aplikasi.
-6. Klik Buka aplikasi. Dashboard langsung terbuka.
+6. Klik Buka aplikasi.
 
-PILIHAN B - XAMPP
-1. Ekstrak folder teacherdesk-local-desktop ke C:\xampp\htdocs\
-2. Aktifkan Apache dan MySQL.
-3. Buka:
-   http://localhost/teacherdesk-local-desktop/setup.php
-4. Isi konfigurasi database dan klik Pasang aplikasi.
+PEMBARUAN DARI VERSI 1.2
+1. Buat backup melalui menu Backup.
+2. Simpan file .env dan folder storage\materials.
+3. Ganti file aplikasi dengan versi 1.3.
+4. Kembalikan file .env dan folder storage\materials.
+5. Buka aplikasi. Tabel template dibuat otomatis.
+6. Jangan menjalankan setup.php pada database lama.
+
+CARA MEMAKAI TEMPLATE
+1. Buka Jadwal Mengajar.
+2. Klik Template pada jadwal yang sudah ada.
+3. Pilih template pada panel Template jadwal mingguan.
+4. Tentukan minggu awal dan jumlah minggu.
+5. Klik Terapkan template.
 
 CATATAN
 - PHP minimal versi 8.1.

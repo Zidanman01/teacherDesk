@@ -26,7 +26,7 @@ $draftQuestions = (int)$db->query("SELECT COUNT(*) FROM questions WHERE status='
 
 <div class="grid grid-3 mt-3">
     <section class="card span-2">
-        <div class="card-header"><div><h2>Jadwal hari ini</h2><p>Rencana mengajar pada <?= e(format_date(date('Y-m-d'))) ?></p></div><a class="btn btn-secondary btn-sm" href="<?= url('schedules') ?>">Lihat semua</a></div>
+        <div class="card-header"><div><h2>Jadwal hari ini</h2><p>Rencana mengajar pada <?= e(format_date(date('Y-m-d'))) ?></p></div><a class="btn btn-secondary btn-sm" href="<?= url('schedules', ['week' => date('Y-m-d')]) ?>">Kalender minggu ini</a></div>
         <div class="card-body">
             <?php if($todaySchedules): ?><div class="schedule-list">
                 <?php foreach($todaySchedules as $schedule): ?>

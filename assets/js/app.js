@@ -21,20 +21,21 @@
     });
   });
 
-  const subjectSelect = document.querySelector('[data-subject-filter]');
-  const materialSelect = document.querySelector('[data-material-select]');
-  if (subjectSelect && materialSelect) {
+  document.querySelectorAll('[data-material-filter-form]').forEach((form) => {
+    const subjectSelect = form.querySelector('[data-subject-filter]');
+    const materialSelect = form.querySelector('[data-material-select]');
+    if (!subjectSelect || !materialSelect) return;
     const filterMaterials = () => {
       const subjectId = subjectSelect.value;
       [...materialSelect.options].forEach((option) => {
         if (!option.value) return;
-        option.hidden = subjectId && option.dataset.subject !== subjectId;
+        option.hidden = Boolean(subjectId) && option.dataset.subject !== subjectId;
       });
       if (materialSelect.selectedOptions[0]?.hidden) materialSelect.value = '';
     };
     subjectSelect.addEventListener('change', filterMaterials);
     filterMaterials();
-  }
+  });
 
   document.querySelectorAll('[data-select-all]').forEach((master) => {
     master.addEventListener('change', () => {

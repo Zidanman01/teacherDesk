@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 final class BackupService
 {
-    private const TABLES = ['subjects','classes','materials','schedules','teaching_journals','questions','settings'];
+    private const TABLES = ['subjects','classes','materials','schedule_templates','schedules','teaching_journals','questions','settings'];
 
     public static function export(PDO $db): never
     {
         $payload = [
             'application' => 'TeacherDesk Lokal',
-            'version' => '1.1.0',
+            'version' => '1.3.0',
             'exported_at' => date(DATE_ATOM),
             'tables' => [],
         ];

@@ -60,7 +60,7 @@ foreach ($rows as $row) {
     <div class="card-header"><div><h2>Informasi sistem</h2></div></div>
     <div class="card-body">
         <div class="grid grid-3">
-            <div><span class="muted text-sm">Versi aplikasi</span><strong style="display:block;margin-top:4px">1.1.0 Desktop</strong></div>
+            <div><span class="muted text-sm">Versi aplikasi</span><strong style="display:block;margin-top:4px">1.3.0 Desktop</strong></div>
             <div><span class="muted text-sm">Zona waktu</span><strong style="display:block;margin-top:4px"><?= e(date_default_timezone_get()) ?></strong></div>
             <div><span class="muted text-sm">Database</span><strong style="display:block;margin-top:4px">MySQL / MariaDB</strong></div>
         </div>

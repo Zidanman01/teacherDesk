@@ -28,6 +28,7 @@ final class Database
                     PDO::ATTR_EMULATE_PREPARES => false,
                 ]
             );
+            SchemaManager::migrate(self::$connection);
         } catch (PDOException $e) {
             http_response_code(500);
             $setupLink = is_file(dirname(__DIR__) . '/setup.php') ? '<p><a href="setup.php">Buka halaman instalasi</a></p>' : '';
