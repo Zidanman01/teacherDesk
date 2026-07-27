@@ -3,18 +3,19 @@ require_once __DIR__ . '/../app/Database.php';
 
 $conn = Database::connection(); 
 
-// 1. Logika untuk Menghapus Sesi (Jika tombol 🗑️ diklik)
+// 1. Logika untuk Menghapus Sesi
 if (isset($_GET['action']) && $_GET['action'] === 'delete' && isset($_GET['session_id'])) {
     $delStmt = $conn->prepare("DELETE FROM chat_history WHERE session_id = ?");
     $delStmt->execute([$_GET['session_id']]);
-    header("Location: chat_dashboard.php"); // Refresh halaman setelah dihapus
+    // Redirect kembali ke halaman chat_dashboard setelah menghapus
+    header("Location: ?page=chat_dashboard"); 
     exit();
 }
 
-// 2. Menentukan Sesi Aktif (Ambil dari URL, atau buat ID acak baru untuk New Chat)
+// 2. Menentukan Sesi Aktif
 $currentSession = $_GET['session'] ?? uniqid('chat_');
 
-// 3. Mengambil Maksimal 10 Sesi Riwayat (Diurutkan dari yang paling baru)
+// 3. Mengambil Maksimal 10 Sesi Riwayat
 $sessionStmt = $conn->prepare("
     SELECT session_id, 
            (SELECT content FROM chat_history ch2 WHERE ch2.session_id = ch1.session_id ORDER BY id ASC LIMIT 1) as first_msg 
@@ -26,7 +27,7 @@ $sessionStmt = $conn->prepare("
 $sessionStmt->execute();
 $recentSessions = $sessionStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 4. Mengambil Riwayat Pesan untuk Sesi yang Sedang Aktif
+// 4. Mengambil Riwayat Pesan
 $stmt = $conn->prepare("SELECT role, content FROM chat_history WHERE session_id = ? ORDER BY id ASC");
 $stmt->execute([$currentSession]);
 $chat_histories = $stmt->fetchAll(PDO::FETCH_ASSOC); 
@@ -40,107 +41,19 @@ if (empty($chat_histories)) {
 ?>
 
 <style>
-    /* Pembungkus Utama untuk membagi Layar menjadi 2 Kolom */
-    .app-layout {
-        display: flex;
-        gap: 20px;
-        height: calc(100vh - 100px);
-        margin-top: 10px;
-    }
-
-    /* === SIDEBAR RIWAYAT (KOLOM KIRI) === */
-    .history-sidebar {
-        width: 260px;
-        background-color: #ffffff;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-    }
-
-    .btn-new-chat {
-        display: block;
-        width: 100%;
-        padding: 10px;
-        background-color: #3b82f6;
-        color: white;
-        text-align: center;
-        border-radius: 8px;
-        font-weight: bold;
-        text-decoration: none;
-        margin-bottom: 15px;
-        transition: background 0.2s;
-    }
-
-    .btn-new-chat:hover {
-        background-color: #2563eb;
-        color: white;
-    }
-
-    .history-list {
-        flex: 1;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-    }
-
-    .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-radius: 8px;
-        background-color: #f9fafb;
-        border: 1px solid transparent;
-        transition: border 0.2s;
-    }
-
-    .history-item:hover {
-        border-color: #d1d5db;
-    }
-
-    .history-item.active {
-        background-color: #eff6ff;
-        border-color: #bfdbfe;
-    }
-
-    .history-link {
-        color: #374151;
-        text-decoration: none;
-        font-size: 0.85rem;
-        flex: 1;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .btn-delete {
-        color: #9ca3af;
-        text-decoration: none;
-        font-size: 0.9rem;
-        margin-left: 8px;
-    }
-    
-    .btn-delete:hover {
-        color: #ef4444;
-    }
-
-    /* === KOTAK CHAT (KOLOM KANAN) === */
-    .chat-wrapper {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background-color: #ffffff; 
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        border: 1px solid #e5e7eb;
-        overflow: hidden; 
-    }
-
-    /* (Sisa CSS Bubble Chat sama persis seperti sebelumnya) */
+    /* CSS Sama seperti sebelumnya */
+    .app-layout { display: flex; gap: 20px; height: calc(100vh - 100px); margin-top: 10px; }
+    .history-sidebar { width: 260px; background-color: #ffffff; border-radius: 12px; border: 1px solid #e5e7eb; display: flex; flex-direction: column; padding: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+    .btn-new-chat { display: block; width: 100%; padding: 10px; background-color: #3b82f6; color: white; text-align: center; border-radius: 8px; font-weight: bold; text-decoration: none; margin-bottom: 15px; transition: background 0.2s; }
+    .btn-new-chat:hover { background-color: #2563eb; color: white; }
+    .history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+    .history-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border-radius: 8px; background-color: #f9fafb; border: 1px solid transparent; transition: border 0.2s; }
+    .history-item:hover { border-color: #d1d5db; }
+    .history-item.active { background-color: #eff6ff; border-color: #bfdbfe; }
+    .history-link { color: #374151; text-decoration: none; font-size: 0.85rem; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-delete { color: #9ca3af; text-decoration: none; font-size: 0.9rem; margin-left: 8px; }
+    .btn-delete:hover { color: #ef4444; }
+    .chat-wrapper { flex: 1; display: flex; flex-direction: column; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e5e7eb; overflow: hidden; }
     .chat-container { flex: 1; overflow-y: auto; padding: 1.5rem 1.5rem 0 1.5rem; scroll-behavior: smooth; background-color: #f9fafb; }
     .message { margin-bottom: 1.5rem; padding: 1rem 1.25rem; border-radius: 1rem; max-width: 80%; font-size: 0.95rem; line-height: 1.6; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
     .msg-user { background-color: #3b82f6; color: white; margin-left: auto; border-bottom-right-radius: 0.2rem; }
@@ -160,22 +73,21 @@ if (empty($chat_histories)) {
     
     <!-- KOLOM KIRI: DAFTAR RIWAYAT -->
     <div class="history-sidebar">
-        <!-- Tombol New Chat akan mereset parameter URL -->
-        <a href="chat_dashboard.php" class="btn-new-chat">➕ Chat Baru</a>
+        <!-- PERBAIKAN URL: Selalu panggil page=chat_dashboard -->
+        <a href="?page=chat_dashboard" class="btn-new-chat">➕ Chat Baru</a>
         
         <div class="history-list">
             <?php foreach ($recentSessions as $ses): 
-                // Mengambil 25 huruf pertama dari pesan untuk dijadikan "Judul" riwayat
                 $title = htmlspecialchars(mb_strimwidth($ses['first_msg'] ?? 'Obrolan Baru', 0, 25, '...'));
                 $isActive = ($ses['session_id'] === $currentSession) ? 'active' : '';
             ?>
                 <div class="history-item <?= $isActive ?>">
-                    <!-- Link untuk memuat sesi tersebut -->
-                    <a href="?session=<?= urlencode($ses['session_id']) ?>" class="history-link" title="<?= htmlspecialchars($ses['first_msg']) ?>">
+                    <!-- PERBAIKAN URL: Tambahkan page=chat_dashboard -->
+                    <a href="?page=chat_dashboard&session=<?= urlencode($ses['session_id']) ?>" class="history-link" title="<?= htmlspecialchars($ses['first_msg']) ?>">
                         💬 <?= $title ?>
                     </a>
-                    <!-- Tombol Hapus -->
-                    <a href="?action=delete&session_id=<?= urlencode($ses['session_id']) ?>" class="btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus obrolan ini?');">🗑️</a>
+                    <!-- PERBAIKAN URL: Tambahkan page=chat_dashboard -->
+                    <a href="?page=chat_dashboard&action=delete&session_id=<?= urlencode($ses['session_id']) ?>" class="btn-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus obrolan ini?');">🗑️</a>
                 </div>
             <?php endforeach; ?>
         </div>
@@ -206,7 +118,6 @@ if (empty($chat_histories)) {
 </div>
 
 <script>
-    // Menyimpan Session ID PHP ke dalam variabel JavaScript agar API tahu
     const activeSessionId = "<?= $currentSession ?>";
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -276,7 +187,6 @@ if (empty($chat_histories)) {
             const response = await fetch('api_chat.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                // --- PERUBAHAN: Mengirim session_id ke API ---
                 body: JSON.stringify({ 
                     session_id: activeSessionId,
                     messages: chatHistory 
@@ -301,10 +211,9 @@ if (empty($chat_histories)) {
             chatInput.focus();
             scrollToBottom();
             
-            // Jika ini pesan pertama (mengganti judul dari New Chat), refresh list otomatis
+            // PERBAIKAN URL PADA JS: Refresh dengan membawa page=chat_dashboard
             if (chatBox.querySelectorAll('.message').length <= 3) {
-                // Menunggu AI selesai membalas, lalu refresh agar sidebar riwayat terupdate
-                setTimeout(() => window.location.href = "?session=" + activeSessionId, 500);
+                setTimeout(() => window.location.href = "?page=chat_dashboard&session=" + activeSessionId, 500);
             }
         }
     }
