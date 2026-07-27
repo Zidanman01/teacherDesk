@@ -20,3 +20,4 @@ require_once __DIR__ . '/../app/Database.php';
 require_once __DIR__ . '/../app/QuestionGenerator.php';
 require_once __DIR__ . '/../app/BackupService.php';
 require_once __DIR__ . '/../app/actions.php';
+require_once __DIR__ . '/../app/OpenRouterService.php';
