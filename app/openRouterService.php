@@ -12,7 +12,7 @@ class OpenRouterService {
         }
     }
 
-    public function sendMessage(string $prompt, string $systemPrompt = "", string $model = "nvidia/nemotron-3-ultra-550b-a55b:free"): string {
+    public function sendMessage(string $prompt, string $systemPrompt = "", string $model = "openai/gpt-oss-20b:free"): string {
         $messages = [];
         
         if (!empty($systemPrompt)) {

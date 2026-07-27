@@ -1,7 +1,6 @@
 <?php
 declare(strict_types=1);
 
-// Fallback untuk instalasi PHP minimal yang belum mengaktifkan ekstensi mbstring.
 if (!function_exists('mb_strlen')) {
     function mb_strlen(string $value, ?string $encoding = null): int { return strlen($value); }
 }

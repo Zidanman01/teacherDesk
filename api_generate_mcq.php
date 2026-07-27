@@ -15,20 +15,18 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(["status" => "error", "message" => "Metode tidak diizinkan. Gunakan POST."]);
+    echo json_encode(["status" => "error", "message" => "Metode tidak diizinkan."]);
     exit();
 }
 
 if (!isset($_FILES['document']) || $_FILES['document']['error'] !== UPLOAD_ERR_OK) {
     http_response_code(400);
-    echo json_encode(["status" => "error", "message" => "File PDF tidak ditemukan atau gagal diunggah."]);
+    echo json_encode(["status" => "error", "message" => "File PDF gagal diunggah."]);
     exit();
 }
 
 $fileTmpPath = $_FILES['document']['tmp_name'];
-$fileMimeType = mime_content_type($fileTmpPath);
-
-if ($fileMimeType !== 'application/pdf') {
+if (mime_content_type($fileTmpPath) !== 'application/pdf') {
     http_response_code(400);
     echo json_encode(["status" => "error", "message" => "Format file harus PDF."]);
     exit();
@@ -37,24 +35,34 @@ if ($fileMimeType !== 'application/pdf') {
 try {
     $parser = new \Smalot\PdfParser\Parser();
     $pdf = $parser->parseFile($fileTmpPath);
-    $rawText = $pdf->getText();
-    $materi = substr($rawText, 0, 1500);
+
+    $materi = substr($pdf->getText(), 0, 3000);
 
     if (empty(trim($materi))) {
         http_response_code(400);
-        echo json_encode(["status" => "error", "message" => "Dokumen PDF kosong atau teks tidak terbaca."]);
+        echo json_encode(["status" => "error", "message" => "Dokumen PDF kosong."]);
         exit();
     }
 
     $aiService = new OpenRouterService();
-    $systemPrompt = 'Kamu adalah mesin generator soal untuk platform Learning Management System. Berdasarkan teks materi yang diberikan, buatlah 10 soal pilihan ganda. 
-    Kembalikan HANYA dalam format array JSON murni tanpa pembuka/penutup teks apapun. 
-    Struktur wajib: [{"pertanyaan": "...", "pilihan": {"A": "...", "B": "...", "C": "...", "D": "..."}, "kunci_jawaban": "A"}]';
+
+    $systemPrompt = 'Kamu adalah pembuat soal berbasis API. Buatlah TEPAT 10 soal pilihan ganda dari teks yang diberikan menggunakan Bahasa Indonesia. 
+    Berikan HANYA array JSON murni tanpa kalimat sapaan. 
+    Format Wajib: [{"pertanyaan": "...", "pilihan": {"A": "...", "B": "...", "C": "...", "D": "..."}, "kunci_jawaban": "A"}]
+    Aturan Ketat: 
+    1. Jumlah soal HARUS 10.
+    2. Jangan gunakan baris baru (Enter/Newline) atau tab di dalam nilai teks. 
+    3. Pastikan kurung tutup JSON sempurna di akhir.';
 
     $jsonResponse = $aiService->sendMessage($materi, $systemPrompt);
 
-    $cleanJson = str_replace(['```json', '```'], '', $jsonResponse);
-    $soalArray = json_decode(trim($cleanJson), true);
+    preg_match('/\[.*\]/s', $jsonResponse, $matches);
+    $cleanJson = isset($matches[0]) ? $matches[0] : '';
+    
+    $cleanJson = preg_replace('/[\x00-\x1F\x7F]/', '', $cleanJson);
+
+    $soalArray = json_decode($cleanJson, true);
+    $jsonError = json_last_error_msg(); 
 
     if (is_array($soalArray)) {
         http_response_code(200);
@@ -66,15 +74,14 @@ try {
         http_response_code(500);
         echo json_encode([
             "status" => "error",
-            "message" => "Gagal memproses soal dari AI, format rusak.",
+            "message" => "AI merespons dengan format JSON yang salah. Detail PHP: " . $jsonError,
             "raw_response" => $jsonResponse
         ]);
     }
-
 } catch (Exception $e) {
     http_response_code(500);
     echo json_encode([
         "status" => "error",
-        "message" => "Terjadi kesalahan sistem: " . $e->getMessage()
+        "message" => "Kesalahan sistem: " . $e->getMessage()
     ]);
 }

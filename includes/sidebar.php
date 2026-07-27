@@ -7,7 +7,8 @@ $nav = [
     ['materials','file','Materi'],
     ['journals','journal','Jurnal Mengajar'],
     ['questions','question','Bank Soal'],
-    ['generator','sparkles','Generator Soal'],
+    ['chat_dashboard','message-circle','Konsultan AI'],
+    ['generate_soal','sparkles','Generator Soal AI'],
     ['backup','backup','Backup'],
     ['settings','settings','Pengaturan'],
 ];
@@ -37,9 +38,17 @@ $currentPage = $_GET['page'] ?? 'dashboard';
         <div>
             <p class="eyebrow"><?= e(indo_day(date('Y-m-d')) . ', ' . format_date(date('Y-m-d'))) ?></p>
             <h1><?= e([
-                'dashboard'=>'Dashboard','subjects'=>'Mata Pelajaran','classes'=>'Manajemen Kelas','schedules'=>'Jadwal Mengajar',
-                'materials'=>'Materi Pembelajaran','journals'=>'Jurnal Mengajar','questions'=>'Bank Soal Pilihan Ganda',
-                'generator'=>'Generator Soal','backup'=>'Backup dan Pemulihan','settings'=>'Pengaturan'
+                'dashboard'=>'Dashboard',
+                'subjects'=>'Mata Pelajaran',
+                'classes'=>'Manajemen Kelas',
+                'schedules'=>'Jadwal Mengajar',
+                'materials'=>'Materi Pembelajaran',
+                'journals'=>'Jurnal Mengajar',
+                'questions'=>'Bank Soal Pilihan Ganda',
+                'chat_dashboard'=>'Konsultan Kurikulum AI',
+                'generate_soal'=>'AI Generator Soal',
+                'backup'=>'Backup dan Pemulihan',
+                'settings'=>'Pengaturan'
             ][$currentPage] ?? 'TeacherDesk') ?></h1>
         </div>
         <div class="topbar-actions">

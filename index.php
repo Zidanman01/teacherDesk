@@ -9,7 +9,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $page = $_GET['page'] ?? 'dashboard';
-$allowedPages = ['dashboard','subjects','classes','schedules','materials','journals','questions','generator','backup','settings'];
+
+$allowedPages = [
+    'dashboard',
+    'subjects',
+    'classes',
+    'schedules',
+    'materials',
+    'journals',
+    'questions',
+    'chat_dashboard', 
+    'generate_soal', 
+    'backup',
+    'settings'
+];
+
 if (!in_array($page, $allowedPages, true)) {
     $page = 'dashboard';
 }
