@@ -19,7 +19,8 @@ $allowedPages = [
     'journals',
     'questions',
     'chat_dashboard', 
-    'generate_soal', 
+    'generate_soal',
+'generator', 
     'backup',
     'settings'
 ];

@@ -1,0 +1,232 @@
+/* =========================================================
+   TeacherDesk 1.4.2 - Standard page layout
+   Berlaku untuk semua halaman kecuali Dashboard, Backup,
+   dan Pengaturan.
+   ========================================================= */
+
+.topbar--page {
+    min-height: 78px;
+    padding: 13px 28px;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    background: rgba(255, 255, 255, 0.96);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 14px rgba(25, 40, 75, 0.035);
+    backdrop-filter: blur(14px);
+}
+
+.topbar--page .topbar-main {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.topbar--page .topbar-page-icon {
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
+    display: grid;
+    place-items: center;
+    color: var(--primary);
+    background: linear-gradient(145deg, #f5f7ff, #e9efff);
+    border: 1px solid #dbe4ff;
+    border-radius: 13px;
+}
+
+.topbar--page .topbar-copy {
+    min-width: 0;
+}
+
+.topbar--page h1 {
+    margin: 0;
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 750;
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+}
+
+.topbar--page .topbar-subtitle {
+    max-width: 680px;
+    margin: 3px 0 0;
+    overflow: hidden;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.topbar--page .topbar-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.topbar--page .topbar-date {
+    min-height: 36px;
+    padding: 7px 11px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.topbar--page .topbar-date .icon {
+    color: var(--primary);
+}
+
+.topbar--page .topbar-page-action {
+    min-height: 38px;
+    padding-inline: 14px;
+    white-space: nowrap;
+    box-shadow: 0 5px 13px rgba(49, 87, 213, 0.16);
+}
+
+.topbar--page .topbar-page-action:hover {
+    box-shadow: 0 7px 17px rgba(49, 87, 213, 0.22);
+}
+
+.content--standard {
+    padding-top: 22px;
+}
+
+/* Judul dan tombol lama disembunyikan karena sudah dipindahkan ke header. */
+.content--standard > .section-title {
+    display: none;
+}
+
+/* Saat formulir tidak dibuka, kartu daftar langsung rapat ke bagian atas. */
+.content--standard > .section-title + .card.mt-3 {
+    margin-top: 0;
+}
+
+/* Menyamakan Generator Soal AI dengan lebar kartu halaman lain. */
+.page-generate_soal > .card {
+    width: 100%;
+    max-width: none !important;
+    margin: 0 !important;
+    overflow: hidden;
+    border: 1px solid var(--border) !important;
+    border-radius: var(--radius) !important;
+    box-shadow: var(--shadow) !important;
+}
+
+.page-generate_soal > .card > .card-header {
+    display: none;
+}
+
+.page-generate_soal > .card > .card-body {
+    padding: 24px;
+}
+
+.page-generate_soal .result-box {
+    border-color: var(--border);
+    border-radius: 12px;
+    background: var(--surface-2);
+}
+
+.page-generate_soal .question-card {
+    border-color: var(--border);
+    border-radius: 12px;
+    box-shadow: 0 4px 14px rgba(25, 40, 75, 0.045);
+}
+
+/* Chat tetap memiliki ruang kerja besar, tetapi mengikuti jarak halaman standar. */
+.page-chat_dashboard .app-layout {
+    height: calc(100vh - 126px);
+    min-height: 560px;
+    margin-top: 0;
+}
+
+.page-chat_dashboard .history-sidebar,
+.page-chat_dashboard .chat-wrapper {
+    border-color: var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+/* Generator lokal dibuka dari halaman Materi. */
+.page-generator .grid.grid-3 {
+    align-items: start;
+}
+
+@media (max-width: 1180px) {
+    .topbar--page .topbar-subtitle {
+        max-width: 430px;
+    }
+
+    .topbar--page .topbar-date span {
+        display: none;
+    }
+
+    .topbar--page .topbar-date {
+        width: 38px;
+        justify-content: center;
+        padding-inline: 0;
+    }
+}
+
+@media (max-width: 760px) {
+    .topbar--page {
+        min-height: auto;
+        padding: 13px 16px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .topbar--page .topbar-page-icon {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+        border-radius: 11px;
+    }
+
+    .topbar--page h1 {
+        font-size: 18px;
+    }
+
+    .topbar--page .topbar-subtitle {
+        max-width: calc(100vw - 112px);
+    }
+
+    .topbar--page .topbar-actions {
+        width: 100%;
+        margin-left: 0;
+        padding-left: 51px;
+    }
+
+    .topbar--page .topbar-page-action {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .content--standard {
+        padding-top: 16px;
+    }
+
+    .page-chat_dashboard .app-layout {
+        height: auto;
+        min-height: 0;
+        flex-direction: column;
+    }
+
+    .page-chat_dashboard .history-sidebar {
+        width: 100%;
+        max-height: 240px;
+    }
+
+    .page-chat_dashboard .chat-wrapper {
+        min-height: 620px;
+    }
+}
