@@ -38,7 +38,7 @@ Pastikan sistem Anda telah terinstal:
    cp .env.example .env
    php artisan key:generate
    ```
-   *Konfigurasikan koneksi database PostgreSQL pada file `.env`.*
+   *Konfigurasikan koneksi database MySQL pada file `.env`.*
    ```bash
    php artisan migrate
    php artisan serve
