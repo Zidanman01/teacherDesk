@@ -13,7 +13,7 @@ TeacherDesk adalah platform Sistem Manajemen Pembelajaran (LMS) dan portal eduka
 TeacherDesk dibangun dengan memanfaatkan arsitektur modern:
 - **Frontend**: [React.js](https://reactjs.org/) - Menyajikan antarmuka pengguna yang responsif, dinamis, dan menarik.
 - **Backend**: [Laravel](https://laravel.com/) - Framework PHP tangguh untuk mengelola API dan logika bisnis.
-- **Database**: [PostgreSQL](https://www.postgresql.org/) - Sistem manajemen database relasional dengan skalabilitas dan keandalan tinggi.
+- **Database**: [MySQL]((https://www.mysql.com/)) - Sistem manajemen database relasional dengan skalabilitas dan keandalan tinggi.
 
 ## 🚀 Instalasi & Persiapan
 
