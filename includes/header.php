@@ -6,6 +6,7 @@
     <title><?= e(env('APP_NAME', 'TeacherDesk Lokal')) ?></title>
     <link rel="stylesheet" href="assets/css/app.css?v=1.4.2">
     <link rel="stylesheet" href="assets/css/page-layout.css?v=1.4.2">
+    <link rel="stylesheet" href="assets/css/backup-settings.css?v=1.4.2">
 </head>
 <body>
 <div class="app-shell">

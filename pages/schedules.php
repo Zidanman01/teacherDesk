@@ -19,7 +19,6 @@ if (isset($_GET['template_edit'])) {
 }
 $showTemplateForm = isset($_GET['template_create']) || $templateEdit;
 
-// Kalender mingguan selalu dimulai pada hari Senin.
 $weekInput = (string) ($_GET['week'] ?? date('Y-m-d'));
 $weekReference = DateTimeImmutable::createFromFormat('!Y-m-d', $weekInput);
 if (!$weekReference || $weekReference->format('Y-m-d') !== $weekInput) {

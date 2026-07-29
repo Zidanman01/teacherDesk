@@ -1,13 +1,13 @@
 /* assets/css/chat.css */
 .chat-container {
     width: 100%;
-    max-width: 800px; /* Diperlebar sedikit agar pas di dashboard */
+    max-width: 800px;
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
-    height: 75vh; /* Disesuaikan agar tidak menutupi footer/header */
+    height: 75vh;
     margin: 20px auto;
     overflow: hidden;
 }

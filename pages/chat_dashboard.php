@@ -919,8 +919,6 @@ foreach ($storedChatHistories as $history) {
 
                     if (rowTrimmed === '') break;
 
-                    // Memperbaiki riwayat lama yang sempat terpotong karena <br>
-                    // di dalam sel tabel diubah menjadi baris baru oleh versi sebelumnya.
                     if (!rowLine.includes('|')) {
                         if (rows.length === 0 || isBlockStart(lines, index)) break;
 
@@ -936,8 +934,6 @@ foreach ($storedChatHistories as $history) {
                     const parsedRow = splitTableRow(rowLine);
                     const startsWithPipe = /^\s*\|/.test(rowLine);
 
-                    // Baris lanjutan hasil normalisasi lama biasanya tidak diawali "|"
-                    // dan hanya memiliki satu sel. Gabungkan kembali ke sel terakhir.
                     if (!startsWithPipe && parsedRow.length < headers.length && rows.length > 0) {
                         const previousRow = rows[rows.length - 1];
                         const targetCell = Math.min(headers.length - 1, Math.max(0, previousRow.length - 1));

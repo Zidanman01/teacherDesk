@@ -1,9 +1,3 @@
-/* =========================================================
-   TeacherDesk 1.4.2 - Standard page layout
-   Berlaku untuk semua halaman kecuali Dashboard, Backup,
-   dan Pengaturan.
-   ========================================================= */
-
 .topbar--page {
     min-height: 78px;
     padding: 13px 28px;
@@ -100,17 +94,14 @@
     padding-top: 22px;
 }
 
-/* Judul dan tombol lama disembunyikan karena sudah dipindahkan ke header. */
 .content--standard > .section-title {
     display: none;
 }
 
-/* Saat formulir tidak dibuka, kartu daftar langsung rapat ke bagian atas. */
 .content--standard > .section-title + .card.mt-3 {
     margin-top: 0;
 }
 
-/* Menyamakan Generator Soal AI dengan lebar kartu halaman lain. */
 .page-generate_soal > .card {
     width: 100%;
     max-width: none !important;
@@ -141,7 +132,6 @@
     box-shadow: 0 4px 14px rgba(25, 40, 75, 0.045);
 }
 
-/* Chat tetap memiliki ruang kerja besar, tetapi mengikuti jarak halaman standar. */
 .page-chat_dashboard .app-layout {
     height: calc(100vh - 126px);
     min-height: 560px;
@@ -155,7 +145,6 @@
     box-shadow: var(--shadow);
 }
 
-/* Generator lokal dibuka dari halaman Materi. */
 .page-generator .grid.grid-3 {
     align-items: start;
 }
