@@ -1,8 +1,33 @@
 <?php
 declare(strict_types=1);
 if(session_status()!==PHP_SESSION_ACTIVE){session_start();}
+require_once __DIR__ . '/app/config_helper.php';
 require_once __DIR__.'/app/helpers.php';
+$lockFile = __DIR__ . '/storage/installed.lock';
+$storageDirectory = __DIR__ . '/storage';
 $message='';$error='';
+
+if (!is_dir($storageDirectory)) {
+    mkdir($storageDirectory, 0775, true);
+}
+
+file_put_contents(
+    $storageDirectory . '/installed.lock',
+    json_encode([
+        'installed_at' => date(DATE_ATOM),
+        'version' => app_config('version', '1.5.1'),
+    ], JSON_PRETTY_PRINT)
+);
+
+if (is_file($lockFile)) {
+    http_response_code(403);
+
+    exit(
+        'TeacherDesk sudah terpasang. '
+        . 'Gunakan sistem migrasi untuk memperbarui database.'
+    );
+}
+
 if($_SERVER['REQUEST_METHOD']==='POST'){
     verify_csrf();
     $host=trim((string)($_POST['host']??'127.0.0.1'));$port=trim((string)($_POST['port']??'3306'));$dbName=trim((string)($_POST['db_name']??'teacherdesk_local'));$user=trim((string)($_POST['db_user']??'root'));$pass=(string)($_POST['db_pass']??'');

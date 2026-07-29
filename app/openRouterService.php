@@ -93,7 +93,35 @@ class OpenRouterService
 
             $response = curl_exec($ch);
             $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $error = curl_error($ch);
+            $curlError = curl_error($ch);
+            if ($response === false) {
+                $lastError = 'Gagal terhubung ke OpenRouter: '
+                    . ($curlError !== '' ? $curlError : 'kesalahan jaringan tidak diketahui.');
+            }
+
+            $ch = curl_init($endpoint);
+            if ($ch === false) {
+                throw new RuntimeException('Gagal menginisialisasi koneksi cURL.');
+            }
+
+            curl_setopt_array($ch, [
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_POST => true,
+                CURLOPT_HTTPHEADER => $headers,
+                CURLOPT_POSTFIELDS => json_encode($payload, JSON_UNESCAPED_UNICODE),
+                CURLOPT_CONNECTTIMEOUT => 15,
+                CURLOPT_TIMEOUT => 180,
+                CURLOPT_SSL_VERIFYPEER => true,
+                CURLOPT_SSL_VERIFYHOST => 2,
+            ]);
+
+            $decoded = json_decode($response, true);
+
+            if (!is_array($decoded)) {
+                throw new RuntimeException(
+                    'OpenRouter mengirim respons yang tidak dapat dibaca.'
+                );
+            }
 
             if ($response === false) {
                 $lastError = 'Gagal terhubung ke OpenRouter: ' . ($curlError ?: 'kesalahan jaringan tidak diketahui.');

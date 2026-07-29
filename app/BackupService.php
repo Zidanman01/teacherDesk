@@ -9,7 +9,7 @@ final class BackupService
     {
         $payload = [
             'application' => 'TeacherDesk Lokal',
-            'version' => '1.3.0',
+            'version' => '1.4.0',
             'exported_at' => date(DATE_ATOM),
             'tables' => [],
         ];

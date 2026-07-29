@@ -1,16 +1,7 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS=0;
 
-DROP TABLE IF EXISTS teaching_journals;
-DROP TABLE IF EXISTS questions;
-DROP TABLE IF EXISTS schedules;
-DROP TABLE IF EXISTS schedule_templates;
-DROP TABLE IF EXISTS materials;
-DROP TABLE IF EXISTS classes;
-DROP TABLE IF EXISTS subjects;
-DROP TABLE IF EXISTS settings;
-DROP TABLE IF EXISTS users;
-CREATE TABLE subjects (
+CREATE TABLE IF NOT EXISTS subjects (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
     grade_level VARCHAR(120) NOT NULL,
@@ -26,7 +17,7 @@ CREATE TABLE subjects (
     INDEX idx_subject_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE classes (
+CREATE TABLE IF NOT EXISTS classes (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     grade_level VARCHAR(120) NOT NULL,
@@ -41,7 +32,7 @@ CREATE TABLE classes (
     INDEX idx_class_name (name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE materials (
+CREATE TABLE IF NOT EXISTS materials (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     subject_id BIGINT UNSIGNED NOT NULL,
     class_id BIGINT UNSIGNED NULL,
@@ -62,7 +53,7 @@ CREATE TABLE materials (
     FULLTEXT INDEX ft_material_text (title, content)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE schedule_templates (
+CREATE TABLE IF NOT EXISTS schedule_templates (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(160) NOT NULL,
     subject_id BIGINT UNSIGNED NOT NULL,
@@ -83,7 +74,7 @@ CREATE TABLE schedule_templates (
     INDEX idx_template_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE schedules (
+CREATE TABLE IF NOT EXISTS schedules (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     subject_id BIGINT UNSIGNED NOT NULL,
     class_id BIGINT UNSIGNED NOT NULL,
@@ -103,7 +94,7 @@ CREATE TABLE schedules (
     INDEX idx_schedule_status (status)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE teaching_journals (
+CREATE TABLE IF NOT EXISTS teaching_journals (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     schedule_id BIGINT UNSIGNED NOT NULL UNIQUE,
     material_id BIGINT UNSIGNED NULL,
@@ -123,7 +114,7 @@ CREATE TABLE teaching_journals (
     INDEX idx_journal_material (material_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE questions (
+CREATE TABLE IF NOT EXISTS questions (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     subject_id BIGINT UNSIGNED NOT NULL,
     material_id BIGINT UNSIGNED NULL,
@@ -147,7 +138,7 @@ CREATE TABLE questions (
     INDEX idx_question_difficulty (difficulty)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE settings (
+CREATE TABLE IF NOT EXISTS settings (
     id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     `key` VARCHAR(120) NOT NULL UNIQUE,
     `value` TEXT NULL,
