@@ -1,20 +1,19 @@
 <?php
 $nav = [
-    ['dashboard','dashboard','Dashboard'],
-    ['subjects','book','Mata Pelajaran'],
-    ['classes','users','Kelas'],
-    ['schedules','calendar','Jadwal Mengajar'],
-    ['materials','file','Materi'],
-    ['journals','journal','Jurnal Mengajar'],
-    ['questions','question','Bank Soal'],
-    ['chat_dashboard','message-circle','Konsultan AI'],
-    ['generate_soal','sparkles','Generator Soal AI'],
-    ['backup','backup','Backup'],
-    ['settings','settings','Pengaturan'],
+    ['dashboard', 'dashboard', 'Dashboard'],
+    ['subjects', 'book', 'Mata Pelajaran'],
+    ['classes', 'users', 'Kelas'],
+    ['schedules', 'calendar', 'Jadwal Mengajar'],
+    ['materials', 'file', 'Materi'],
+    ['journals', 'journal', 'Jurnal Mengajar'],
+    ['questions', 'question', 'Bank Soal'],
+    ['chat_dashboard', 'message-circle', 'Konsultan AI'],
+    ['generate_soal', 'sparkles', 'Generator Soal AI'],
+    ['backup', 'backup', 'Backup'],
+    ['settings', 'settings', 'Pengaturan'],
 ];
 
 $currentPage = $_GET['page'] ?? 'dashboard';
-
 $pageMeta = [
     'subjects' => [
         'title' => 'Mata Pelajaran',
@@ -101,9 +100,15 @@ $pageMeta = [
             'url' => url('materials'),
         ],
     ],
+    'backup' => [
+        'title' => 'Backup dan Pemulihan',
+        'subtitle' => 'Cadangkan data aplikasi dan pulihkan arsip JSON ketika diperlukan.',
+        'icon' => 'backup',
+    ],
 ];
 
-$legacyPages = ['dashboard', 'backup', 'settings'];
+// Dashboard dan Pengaturan mempertahankan topbar lama. Backup memakai layout standar.
+$legacyPages = ['dashboard', 'settings'];
 $isStandardPage = !in_array($currentPage, $legacyPages, true);
 $currentMeta = $pageMeta[$currentPage] ?? [
     'title' => 'TeacherDesk',
@@ -116,15 +121,13 @@ $currentMeta = $pageMeta[$currentPage] ?? [
         <div class="brand-mark">TD</div>
         <div><strong>TeacherDesk</strong><span>Lokal Desktop</span></div>
     </div>
-
     <nav class="nav-list">
-        <?php foreach ($nav as [$route,$ico,$label]): ?>
+        <?php foreach ($nav as [$route, $ico, $label]): ?>
             <a href="<?= url($route) ?>" class="nav-item <?= $currentPage === $route ? 'active' : '' ?>">
                 <?= icon($ico, 19) ?><span><?= e($label) ?></span>
             </a>
         <?php endforeach; ?>
     </nav>
-
     <div class="sidebar-footer">
         <div class="local-mode">
             <?= icon('desktop', 18) ?>
@@ -132,7 +135,6 @@ $currentMeta = $pageMeta[$currentPage] ?? [
         </div>
     </div>
 </aside>
-
 <div class="main-area">
     <?php if ($isStandardPage): ?>
         <header class="topbar topbar--page">
@@ -140,19 +142,16 @@ $currentMeta = $pageMeta[$currentPage] ?? [
                 <div class="topbar-page-icon" aria-hidden="true">
                     <?= icon($currentMeta['icon'], 20) ?>
                 </div>
-
                 <div class="topbar-copy">
                     <h1><?= e($currentMeta['title']) ?></h1>
                     <p class="topbar-subtitle"><?= e($currentMeta['subtitle']) ?></p>
                 </div>
             </div>
-
             <div class="topbar-actions">
                 <div class="topbar-date" title="Tanggal hari ini">
                     <?= icon('calendar', 14) ?>
                     <span><?= e(indo_day(date('Y-m-d')) . ', ' . format_date(date('Y-m-d'))) ?></span>
                 </div>
-
                 <?php if (!empty($currentMeta['action'])): ?>
                     <a class="btn btn-primary topbar-page-action" href="<?= e($currentMeta['action']['url']) ?>">
                         <?= icon($currentMeta['action']['icon'] ?? 'plus', 16) ?>
@@ -166,18 +165,21 @@ $currentMeta = $pageMeta[$currentPage] ?? [
             <div>
                 <p class="eyebrow"><?= e(indo_day(date('Y-m-d')) . ', ' . format_date(date('Y-m-d'))) ?></p>
                 <h1><?= e([
-                    'dashboard'=>'Dashboard',
-                    'backup'=>'Backup dan Pemulihan',
-                    'settings'=>'Pengaturan'
+                    'dashboard' => 'Dashboard',
+                    'settings' => 'Pengaturan',
                 ][$currentPage] ?? 'TeacherDesk') ?></h1>
             </div>
             <div class="topbar-actions">
-                <a class="btn btn-primary" href="<?= url('schedules', ['create'=>1]) ?>"><?= icon('plus',17) ?> Jadwal</a>
+                <a class="btn btn-primary" href="<?= url('schedules', ['create' => 1]) ?>">
+                    <?= icon('plus', 17) ?> Jadwal
+                </a>
             </div>
         </header>
     <?php endif; ?>
-
     <main class="content page-<?= e($currentPage) ?> <?= $isStandardPage ? 'content--standard' : '' ?>">
         <?php foreach ($flashes as $flash): ?>
-            <div class="alert alert-<?= e($flash['type']) ?>" data-alert><?= e($flash['message']) ?><button type="button" aria-label="Tutup">×</button></div>
+            <div class="alert alert-<?= e($flash['type']) ?>" data-alert>
+                <?= e($flash['message']) ?>
+                <button type="button" aria-label="Tutup">×</button>
+            </div>
         <?php endforeach; ?>

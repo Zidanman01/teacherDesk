@@ -13,7 +13,6 @@ final class BackupService
             'exported_at' => date(DATE_ATOM),
             'tables' => [],
         ];
-
         foreach (self::TABLES as $table) {
             $payload['tables'][$table] = $db->query("SELECT * FROM `{$table}` ORDER BY id ASC")->fetchAll();
         }
@@ -24,7 +23,6 @@ final class BackupService
         echo json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         exit;
     }
-
     public static function restore(PDO $db, string $tmpFile): void
     {
         $json = file_get_contents($tmpFile);
@@ -32,14 +30,12 @@ final class BackupService
         if (($payload['application'] ?? '') !== 'TeacherDesk Lokal' || !isset($payload['tables']) || !is_array($payload['tables'])) {
             throw new RuntimeException('File bukan backup TeacherDesk Lokal yang valid.');
         }
-
         $db->beginTransaction();
         try {
             $db->exec('SET FOREIGN_KEY_CHECKS=0');
             foreach (array_reverse(self::TABLES) as $table) {
                 $db->exec("DELETE FROM `{$table}`");
             }
-
             foreach (self::TABLES as $table) {
                 $rows = $payload['tables'][$table] ?? [];
                 if (!is_array($rows)) {
