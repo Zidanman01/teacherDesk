@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 require_once __DIR__ . '/config/bootstrap.php';
 
 $db = Database::connection();
@@ -18,9 +20,10 @@ $allowedPages = [
     'materials',
     'journals',
     'questions',
-    'chat_dashboard', 
+    'chat_dashboard',
     'generate_soal',
-'generator', 
+    'ai_generation_history',
+    'generator',
     'backup',
     'settings'
 ];
@@ -30,6 +33,7 @@ if (!in_array($page, $allowedPages, true)) {
 }
 
 $flashes = consume_flashes();
+
 require __DIR__ . '/includes/header.php';
 require __DIR__ . '/includes/sidebar.php';
 require __DIR__ . '/pages/' . $page . '.php';

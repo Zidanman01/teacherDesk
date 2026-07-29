@@ -1,0 +1,20 @@
+CREATE TABLE IF NOT EXISTS ai_generation_history (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+    subject_id BIGINT UNSIGNED NULL,
+    source_file_name VARCHAR(190) NOT NULL,
+    requested_count TINYINT UNSIGNED NOT NULL DEFAULT 10,
+    generated_count TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    difficulty VARCHAR(20) NOT NULL DEFAULT 'sedang',
+    cognitive_level VARCHAR(20) NOT NULL DEFAULT 'C2',
+    include_explanation TINYINT(1) NOT NULL DEFAULT 1,
+    model VARCHAR(190) NOT NULL,
+    document_characters INT UNSIGNED NOT NULL DEFAULT 0,
+    chunks_used TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    result_json LONGTEXT NULL,
+    status ENUM('success','failed') NOT NULL DEFAULT 'success',
+    error_message TEXT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    INDEX idx_ai_history_subject (subject_id),
+    INDEX idx_ai_history_created (created_at),
+    INDEX idx_ai_history_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
