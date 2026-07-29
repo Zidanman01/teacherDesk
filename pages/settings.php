@@ -1,5 +1,5 @@
 <?php
-$rows = $db->query('SELECT `key`,`value` FROM settings')->fetchAll();
+$rows = $db->query('SELECT `key`, `value` FROM settings ORDER BY `key`')->fetchAll();
 $settings = [];
 
 foreach ($rows as $row) {
@@ -12,11 +12,9 @@ foreach ($rows as $row) {
         <div class="card-header">
             <div>
                 <h2>Profil pengajaran</h2>
-                <p>Informasi dasar yang digunakan pada seluruh aplikasi.</p>
+                <p>Informasi dasar yang digunakan di seluruh aplikasi.</p>
             </div>
-            <div class="card-header-icon" aria-hidden="true">
-                <?= icon('users', 21) ?>
-            </div>
+            <?= icon('settings', 22) ?>
         </div>
 
         <div class="card-body">
@@ -24,8 +22,8 @@ foreach ($rows as $row) {
                 <?= csrf_field() ?>
                 <input type="hidden" name="action" value="save_settings">
 
-                <div class="form-grid settings-form-grid">
-                    <div class="form-group">
+                <div class="form-grid">
+                    <div class="form-group full">
                         <label for="teacher_name">Nama pengajar</label>
                         <input
                             class="form-control"
@@ -36,13 +34,14 @@ foreach ($rows as $row) {
                         >
                     </div>
 
-                    <div class="form-group">
+                    <div class="form-group full">
                         <label for="institution_name">Nama sekolah atau lembaga</label>
                         <input
                             class="form-control"
                             id="institution_name"
                             name="institution_name"
                             value="<?= e($settings['institution_name'] ?? '') ?>"
+                            autocomplete="organization"
                         >
                     </div>
 
@@ -67,86 +66,51 @@ foreach ($rows as $row) {
                             name="default_reminder_minutes"
                             value="<?= e($settings['default_reminder_minutes'] ?? '30') ?>"
                         >
-                        <span class="help-text">
-                            Nilai dalam menit. Pengingat ditampilkan ketika dashboard dibuka.
-                        </span>
+                        <span class="help-text">Nilai dalam menit dan ditampilkan saat dashboard dibuka.</span>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button class="btn btn-primary" type="submit">
-                        <?= icon('settings', 17) ?>
-                        Simpan pengaturan
-                    </button>
+                    <button class="btn btn-primary" type="submit">Simpan pengaturan</button>
                 </div>
             </form>
         </div>
     </section>
 
-    <section class="card">
-        <div class="card-header">
-            <div>
-                <h2>Konfigurasi aplikasi</h2>
-                <p>Ringkasan cara TeacherDesk dijalankan pada perangkat lokal.</p>
+    <div class="grid">
+        <section class="card">
+            <div class="card-header">
+                <div>
+                    <h2>Konfigurasi aplikasi</h2>
+                    <p>Ringkasan cara TeacherDesk berjalan pada komputer lokal.</p>
+                </div>
+                <?= icon('desktop', 22) ?>
             </div>
-            <div class="card-header-icon" aria-hidden="true">
-                <?= icon('desktop', 21) ?>
+            <div class="card-body">
+                <div class="system-list">
+                    <div><span>Akses aplikasi</span><strong>Langsung tanpa login</strong></div>
+                    <div><span>Mode tampilan</span><strong>Desktop lokal</strong></div>
+                    <div><span>Lebar layar minimum</span><strong>1.200 piksel</strong></div>
+                    <div><span>Penyimpanan data</span><strong>MySQL / MariaDB lokal</strong></div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div class="card-body">
-            <div class="system-list settings-system-list">
+        <section class="card">
+            <div class="card-header">
                 <div>
-                    <span>Akses aplikasi</span>
-                    <strong>Langsung tanpa login</strong>
+                    <h2>Informasi sistem</h2>
+                    <p>Versi dan lingkungan aplikasi yang sedang digunakan.</p>
                 </div>
-                <div>
-                    <span>Mode tampilan</span>
-                    <strong>Desktop lokal</strong>
-                </div>
-                <div>
-                    <span>Lebar layar minimum</span>
-                    <strong>1.200 piksel</strong>
-                </div>
-                <div>
-                    <span>Penyimpanan</span>
-                    <strong>MySQL / MariaDB lokal</strong>
+                <?= icon('settings', 22) ?>
+            </div>
+            <div class="card-body">
+                <div class="system-list">
+                    <div><span>Versi aplikasi</span><strong>1.4.0 Desktop</strong></div>
+                    <div><span>Zona waktu</span><strong><?= e(date_default_timezone_get()) ?></strong></div>
+                    <div><span>Database</span><strong>MySQL / MariaDB</strong></div>
                 </div>
             </div>
-
-            <div class="settings-note">
-                <?= icon('backup', 17) ?>
-                <p>
-                    Buat backup sebelum memperbarui aplikasi atau melakukan perubahan
-                    besar pada database.
-                </p>
-            </div>
-        </div>
-    </section>
+        </section>
+    </div>
 </div>
-
-<section class="card mt-3">
-    <div class="card-header">
-        <div>
-            <h2>Informasi sistem</h2>
-            <p>Informasi teknis singkat dari instalasi TeacherDesk saat ini.</p>
-        </div>
-    </div>
-
-    <div class="card-body">
-        <div class="system-metrics">
-            <div class="system-metric">
-                <span>Versi aplikasi</span>
-                <strong>1.4.2 Desktop</strong>
-            </div>
-            <div class="system-metric">
-                <span>Zona waktu</span>
-                <strong><?= e(date_default_timezone_get()) ?></strong>
-            </div>
-            <div class="system-metric">
-                <span>Database</span>
-                <strong>MySQL / MariaDB</strong>
-            </div>
-        </div>
-    </div>
-</section>

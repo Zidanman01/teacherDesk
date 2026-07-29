@@ -3,4 +3,10 @@ dist
 .DS_Store
 *.log
 .env
+/vendor/
+/storage/logs/*
+/storage/backups/*
+/storage/installed.lock
+!/storage/logs/.gitkeep
+!/storage/backups/.gitkeep
 backup api
